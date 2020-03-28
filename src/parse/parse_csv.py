@@ -6,6 +6,7 @@ from collections import Counter, defaultdict
 import os, sys
 
 def get_proper_tweets(csvname):
+    tweets_df = pd.read_csv(csvname)
     all_tweets = tweets_df[:190000]
     caa_tweets = all_tweets.tweet
     hashtags = all_tweets.hashtags
@@ -73,23 +74,27 @@ def dump_frequency_dictionary(english_tweets):
     freqDict = dict()
     freq_file = open("frequency_dict.txt","w")
 
-    for tweet in englishTweets:
-        words = tweet.split()
+    for tweet in english_tweets:
+        words = tweet[0].split()
         for word in words:
             if word not in freqDict:
                 freqDict[word] = 1
             else:
                 freqDict[word] += 1
 
-    freq_file.write(freqDict)
+    for k, v in freqDict.items():
+        freq_file.write((k)+ "\t" + str(v) + "\n")
+
     freq_file.close()
 
 
 if __name__ == "__main__":
     # parse the tweets to get the english unicode and then the english language
-    useful_tweets = get_proper_tweets(sys.argv[1]) # send the filename from the command line at terminal
-    eng_unicode_tweets = separate_hindi_other_tweets(useful_tweets)
-    english_tweets, other_tweets = separate_english_other_tweets(eng_unicode_tweets)
+    # tweet_file = sys.argv[1]
+    tweet_file = "/Users/thariq/Research/Cook/TwitterHateSpeech/tweets_till_0901.csv" #sys.argv[1]
+    useful_tweets = get_proper_tweets(tweet_file) # send the filename from the command line at terminal
+    eng_unicode_tweets, _ = separate_hindi_other_tweets(useful_tweets)
+    english_tweets, _ = separate_english_other_tweets(eng_unicode_tweets)
 
     # let's dump the frequency dictionary into a file
     dump_frequency_dictionary(english_tweets)

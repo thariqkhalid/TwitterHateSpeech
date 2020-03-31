@@ -1,5 +1,12 @@
 from parse_csv import *
-import re
+import string, re
+import nltk
+nltk.download('wordnet')
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+nltk.download('punkt')
+from nltk.corpus import stopwords
+import spacy
 
 # create a global dictionary
 dict_words = []
@@ -37,6 +44,54 @@ def clean_url_mentions(tweet):
     clean_tweet = re.sub(r"<eos>", ".", clean_tweet) # now convert back the <eos> to full stops
     return clean_tweet
 
+
+def clean_tweet(tweet):
+
+    # to remove http(s) url links
+    text = re.sub('(https|http).*', '', tweet)
+    # to remove other url links
+    text = re.sub(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', " ", tweet)
+
+    # to remove mentions
+    text = re.sub(r"\. ", "<eos> ", tweet)  # replace the full stops with <eos> to save the full stops from the below re
+    text = ' '.join(re.sub('(@[A-Za-z0-9_]*)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '', text).split())
+    text = re.sub(r"<eos>", ".", text)  # now convert back the <eos> to full stops
+    #print(text)
+    #print('\n')
+
+    # split into words
+    tokens = word_tokenize(text)
+
+    # convert to lower case
+    tokens = [w.lower() for w in tokens]
+
+    # remove punctuation from each word
+    table = str.maketrans('', '', string.punctuation)
+    stripped = [w.translate(table) for w in tokens]
+
+    # remove remaining tokens that are not alphabetic
+    words = [word for word in stripped if word.isalpha()]
+
+    # filter out stop words
+    stop_words = set(stopwords.words('english'))
+    # print(stop_words)
+    words = [w for w in words if not w in stop_words]
+    #print(words[:100])
+    #print('\n')
+
+    # stemming of words
+    porter = PorterStemmer()
+    stemmed_words = [porter.stem(word) for word in words]
+    #print(stemmed_words)
+
+    # lemmatization
+    # Init the Wordnet Lemmatizer
+    lemmatizer = WordNetLemmatizer()
+
+    # Lemmatize list of words and join
+    lemmatized_output = ' '.join([lemmatizer.lemmatize(w) for w in stemmed_words])
+    clean_tweet = lemmatized_output
+    return clean_tweet
 
 if __name__ == "__main__":
     dict_words = load_dictionary()

@@ -56,4 +56,13 @@ if __name__ == "__main__":
         print("English tweet")
     else:
         print("Not an english tweet")
+import sys
+from textblob import TextBlob
 
+a = "Yet another reason why India needs CAA: \n\nHindus Beaten by Pakistani Police for Hoisting Saffron Flag in Their Own Home"  # incorrect spelling
+print("original text: " + str(a))
+
+b = TextBlob(a)
+
+# prints the corrected spelling
+print("corrected text: " + str(b.correct()))

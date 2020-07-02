@@ -1,19 +1,23 @@
-from parse_csv import *
+# from src.parse.parse_csv import *
 import string, re
 import nltk
-nltk.download('wordnet')
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 from nltk.tokenize import word_tokenize
-nltk.download('punkt')
 from nltk.corpus import stopwords
+
 import spacy
+from textblob import TextBlob
 
 # create a global dictionary
 dict_words = []
 NON_ENGLISH_WORDS = 0.2
 
+def nltk_do_once():
+    nltk.download('punkt')
+    nltk.download('wordnet')
+
 def load_dictionary():
-    dictionary_file = open("./dictionary","r").readlines()
+    dictionary_file = open("./src/parse/dictionary","r").readlines()
     dict_words = [w.strip().lower() for w in dictionary_file]
     return dict_words
 
@@ -29,7 +33,7 @@ def english_or_not(tweet):
             non_eng_words += 1
             print(w)
 
-    print("Number of non english words ", non_eng_words )
+    print("Number of non english words ", (non_eng_words,len(words)) )
 
     if (non_eng_words*0.1/len(words)) < NON_ENGLISH_WORDS :
         return False
@@ -99,10 +103,10 @@ if __name__ == "__main__":
                  "Video Published to Cower Other Hindus into Submission!\n\n https://www.youtube.com/watch?v=lTQxDeBmCyI\xa0…\n"
 
     test_tweet_english1 = "Yeh hamarra haq hai"
-    test_tweet_english2 = "This is an english test tweet witth spelling mistake"
+    test_tweet_english2 = "This is an english test tweet with spelling mistake"
 
     # test the clean function @Enaas
-    clean_tweet = clean_url_mentions(test_tweet_cleaning)
+    clean_tweet = clean_tweet(test_tweet_cleaning)
     print(clean_tweet)
 
     # test the english dictionary lookup function @Fathma
@@ -111,13 +115,11 @@ if __name__ == "__main__":
         print("English tweet")
     else:
         print("Not an english tweet")
-import sys
-from textblob import TextBlob
 
-a = "Yet another reason why India needs CAA: \n\nHindus Beaten by Pakistani Police for Hoisting Saffron Flag in Their Own Home"  # incorrect spelling
-print("original text: " + str(a))
+    a = "Yet another reason why India needs CAA: \n\nHindus Beaten by Pakistani Police for Hoisting Saffron Flag in Their Own Home"  # incorrect spelling
+    print("original text: " + str(a))
 
-b = TextBlob(a)
+    b = TextBlob(a)
 
-# prints the corrected spelling
-print("corrected text: " + str(b.correct()))
+    # prints the corrected spelling
+    print("corrected text: " + str(b.correct()))

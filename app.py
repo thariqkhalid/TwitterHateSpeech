@@ -7,6 +7,8 @@ import numpy as np
 from transformers import pipeline
 from src.parse.clean import *
 import pandas as pd
+import xlwt
+from xlwt import Workbook
 
 
 app = Flask(__name__)
@@ -37,7 +39,6 @@ def analyzeTweet():
     # print("dict_words: ", dict_words)
     # nlp = pipeline('sentiment-analysis')
 
-    wfile = open("./output.txt",'w')
 
     if request.method == 'GET':
         return render_template('index.html')
@@ -52,15 +53,35 @@ def analyzeTweet():
             date_since = "2020-6-1"
             # tweets = api.search(hashtag, rpp=100, since_id=1, count=5000)
             tweets = tweepy.Cursor(api.search, q=hashtag, lang="en", since=date_since).items(100)
+            wb = Workbook()
+            s1 = wb.add_sheet('Sheet 1')
 
-            for tweet in tweets:
+            s1.write(1, 0, 'SCREEN_NAME')
+            s1.write(1, 1, 'TEXT')
+            s1.write(1, 2, 'RETWEET_COUNT')
+            s1.write(1, 3, 'POLARITY')
+
+            # s1.write(1, 2, 'SENSITIVITY')
+            # s1.write(1, 0, 'HASHTAGS')
+            # s1.write(1, 0, 'ID')
+            # s1.write(1, 0, 'ID')
+            # s1.write(1, 0, 'ID')
+
+            for t,tweet in enumerate(tweets):
                 retweet_count = tweet.retweet_count
 
                 if retweet_count < 20:
                     continue
 
                 print(retweet_count)
-                wfile.write(tweet.text)
+                print(tweet.text)
+                s1.write(t,0,user.screen_name)
+                s1.write(t, 1, tweet.text)
+                s1.write(t, 2, tweet.retweet_count)
+                s1.write(t, 3, TextBlob(tweet.text).polarity)
+
+                # s1.write(t, 2, tweet.possibly_sensitive)
+                # s1.write(it, 0, tweet.id)
 
                 # res = english_or_not(tweet.text)
                 # if res:
@@ -71,6 +92,8 @@ def analyzeTweet():
                 if TextBlob(txt).polarity != 0.0 and TextBlob(txt).subjectivity != 0.0:
                     polaritylist.append(TextBlob(txt).polarity)
                     subjectivitylist.append(TextBlob(txt).subjectivity)
+
+            wb.save('thariq.xls')
                     # print(TextBlob(txt).sentiment)
 
 

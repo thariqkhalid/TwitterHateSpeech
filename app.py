@@ -52,7 +52,7 @@ def analyzeTweet():
             sentiments = []
             date_since = "2020-6-1"
             # tweets = api.search(hashtag, rpp=100, since_id=1, count=5000)
-            tweets = tweepy.Cursor(api.search, q=hashtag, lang="en", since=date_since).items(100)
+            tweets = tweepy.Cursor(api.search, q=hashtag, lang="en", since=date_since).items(1000)
             wb = Workbook()
             s1 = wb.add_sheet('Sheet 1')
 

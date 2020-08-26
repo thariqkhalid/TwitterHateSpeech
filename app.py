@@ -16,11 +16,6 @@ app = Flask(__name__)
 hashtags_file_path = 'uploads/hashtags_searched.txt'
 
 #define variables for tweepy
-consumer_key = 'bzV4SycWIbBRj7pY4rxt7AXAk' #enter consumer key
-consumer_secret = 'aV1VOVmczfri8gm1W2NaDC5vN8FMq95fZSk5699uN94HEmm2hG' #enter consumer key secret
-access_token = '47097480-yvqftLNat2WjpiqRPbudQ0DWW6R3NX7FKCFhKOP1H' #enter access token
-access_token_secret = '2BLZi8dHUeuCWDONR2Q6olhV6knWwM2V8RrzJME3c3Y45' #enter access token secret
-
 
 #setup twitter authentication
 auth = tweepy.OAuthHandler(consumer_key,consumer_secret)
